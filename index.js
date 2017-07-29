@@ -1,13 +1,9 @@
 import React, { Component } from 'react';
 import {
-  StyleSheet,
   View,
-  Image,
   Animated,
   PanResponder,
-  TouchableOpacity,
   UIManager,
-  LayoutAnimation,
   Dimensions,
   findNodeHandle,
 } from 'react-native';
@@ -148,7 +144,6 @@ export default class Collidable extends Component {
           BOTTOM_Y,
           LEFT_X,
         ] = containerDimension
-
 
 	  let { x_, y_, vx_, vy_ } = 0
 
