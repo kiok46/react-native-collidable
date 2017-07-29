@@ -1,0 +1,33 @@
+{
+  "name": "react-native-collidable",
+  "version": "1.0.0",
+  "description": "React Native Collidable",
+  "main": "index.js",
+  "scripts": {},
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:kiok46/react-native-collidable.git"
+  },
+  "dependencies": {},
+  "keywords": [
+    "react",
+    "react-native",
+    "react-component",
+    "collision-handling",
+    "physics",
+    "gravity",
+	"floating",
+    "ios",
+    "android"
+  ],
+  "author": "Kuldeep Singh Grewal",
+  "license": "MIT",
+  "peerDependencies": {
+	"prop-types": "^15.5.10",
+    "react-native": "^0.46.4"
+  },
+  "bugs": {
+    "url": "https://github.com/kiok46/react-native-collidable/issues"
+  },
+  "homepage": "https://github.com/kiok46/react-native-collidable"
+}
