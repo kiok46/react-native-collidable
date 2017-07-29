@@ -215,7 +215,6 @@ Collidable.defaultProps = {
     velocityMaxX: 30,
     velocityMaxY: 30,
 
-    enableGravity: false,
     verticalGravityEnabled: false,
     horizontalGravityEnabled: false,
     verticalGravity: .2,
@@ -243,7 +242,6 @@ Collidable.propTypes = {
     velocityMaxX: PropTypes.number,
     velovityMaxY: PropTypes.number,
 
-    enableGravity: PropTypes.bool,
     verticalGravityEnabled: PropTypes.bool,
     horizontalGravityEnabled: PropTypes.bool,
     verticalGravity: PropTypes.number,
