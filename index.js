@@ -26,10 +26,14 @@ export default class Collidable extends Component {
   	  const panResponder = PanResponder.create({
   		  onStartShouldSetPanResponder: (evt, gestureState) => {
             this.setState({ captureResponder: true })
-            return gestureState.dx != 0 && gestureState.dy != 0;
+            if (!this.props.disablePanResponder){
+                return gestureState.dx != 0 && gestureState.dy != 0;
+            }
           },
           onMoveShouldSetPanResponderCapture: (evt, gestureState) => {
-            return gestureState.dx != 0 && gestureState.dy != 0;
+            if (!this.props.disablePanResponder){
+                return gestureState.dx != 0 && gestureState.dy != 0;
+            }
           },
   		  onPanResponderMove: (event, gestureState) => {
 			  this.stopCollidable()
@@ -41,11 +45,12 @@ export default class Collidable extends Component {
                   LEFT_X,
               ] = this.props.containerDimension
 
-              const { x, y, width, height } = this.state;
+              const { x, y } = this.state;
+              const { collidableOffSetWidth, collidableOffSetHeight } = this.props;
 
-              if (x + gestureState.dx >= (RIGHT_X - width )||
+              if (x + gestureState.dx >= (RIGHT_X - collidableOffSetWidth )||
                   x + gestureState.dx <= LEFT_X ||
-                  y + gestureState.dy >= (BOTTOM_Y - height) ||
+                  y + gestureState.dy >= (BOTTOM_Y - collidableOffSetHeight) ||
                   y + gestureState.dy <= TOP_Y) {
 
                   this.setState({ captureResponder: false })
@@ -80,8 +85,6 @@ export default class Collidable extends Component {
 		  position,
 		  x: 0,
 		  y: 0,
-          width: 75,
-          height: 75,
 		  vx: this.props.initialVelocityX,
 		  vy: this.props.initialVelocityY,
 	  }
@@ -121,7 +124,7 @@ export default class Collidable extends Component {
     }
 
     update = () => {
-	  const { x, y, width, height, vx, vy, position } = this.state;
+	  const { x, y, vx, vy, position } = this.state;
       const {
           enableImpactForce,
           verticalImpactForce,
@@ -130,6 +133,8 @@ export default class Collidable extends Component {
           horizontalGravityEnabled,
           verticalGravity,
           horizontalGravity,
+          collidableOffSetWidth,
+          collidableOffSetHeight,
           velocityMinY,
           velocityMinX,
           velocityMaxY,
@@ -147,13 +152,13 @@ export default class Collidable extends Component {
 
 	  let { x_, y_, vx_, vy_ } = 0
 
-	  if (y >= BOTTOM_Y - height || y <= TOP_Y){
+	  if (y >= BOTTOM_Y - collidableOffSetHeight || y <= TOP_Y){
 		  vy_ =  enableImpactForce === true ? -(vy - ( vy * verticalImpactForce )) : -vy
 	  } else {
 		  vy_ =  verticalGravityEnabled === true ? (vy + verticalGravity) : vy;
 	  }
 
-	  if ( x >= RIGHT_X - width ||  x  <= LEFT_X){
+	  if ( x >= RIGHT_X - collidableOffSetWidth ||  x  <= LEFT_X){
 		  vx_ = enableImpactForce === true ? -(vx - ( vx * horizontalImpactForce )) : -vx
 	  } else {
           vx_ =  horizontalGravityEnabled === true ? (vx + horizontalGravity) : vx;
@@ -161,7 +166,7 @@ export default class Collidable extends Component {
 
 	  if ((vy_ >= -velocityMinY && vy_ <= velocityMinY) &&
           (vx_ >= -velocityMinX && vx_ <= velocityMinX) &&
-          ( x >= RIGHT_X - width )) {
+          ( x >= RIGHT_X - collidableOffSetWidth )) {
 		this.stopCollidable()
 	  }
 
@@ -205,6 +210,8 @@ Collidable.defaultProps = {
         Dimensions.get('window').height,
         0
     ],
+    collidableOffSetHeight: 75,
+    collidableOffSetWidth: 75,
 
     initialVelocityX: 0,
     initialVelocityY: 0,
@@ -230,7 +237,9 @@ Collidable.propTypes = {
 
     disablePanResponder: PropTypes.bool,
 
-    containerDimension: PropTypes.array.isRequired,
+    containerDimension: PropTypes.array,
+    collidableOffSetHeight: PropTypes.number,
+    collidableOffSetWidth: PropTypes.number,
 
     initialVelocityX: PropTypes.number,
     initialVelocityY: PropTypes.number,
