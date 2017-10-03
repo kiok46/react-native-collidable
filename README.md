@@ -7,11 +7,16 @@ See `Expo Example` folder.
 
 Find it on Expo: https://exp.host/@kiok46/collidable
 
-![Collide Intro](https://user-images.githubusercontent.com/7335120/28744801-40b809ba-7486-11e7-946b-38ab4e6698c3.gif)
+<img src="https://user-images.githubusercontent.com/7335120/28744801-40b809ba-7486-11e7-946b-38ab4e6698c3.gif" width="350">
+
 
 ### Bouncing Football Example
 
-![Bouncing Football](https://user-images.githubusercontent.com/7335120/28745749-1a3e3dde-749c-11e7-8dbf-802b004a642c.gif)
+<img src="https://user-images.githubusercontent.com/7335120/28745749-1a3e3dde-749c-11e7-8dbf-802b004a642c.gif" width="350">
+
+
+Note: Only tested with iOS, not recommended to be used until `version 1.0` is released.
+
 
 #### Properties
 *Note: Other properties will be passed down to underlying component.*

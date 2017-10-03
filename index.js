@@ -13,14 +13,14 @@ import PropTypes from 'prop-types';
 export default class Collidable extends Component {
 
     constructor(props) {
-  	  super(props)
+      super(props)
 
       this.animatedObject = null;
-	  let vel_x = 0;
-	  let vel_y = 0;
-  	  const position = new Animated.ValueXY();
-  	  const panResponder = PanResponder.create({
-  		  onStartShouldSetPanResponder: (evt, gestureState) => {
+    let vel_x = 0;
+    let vel_y = 0;
+      const position = new Animated.ValueXY();
+      const panResponder = PanResponder.create({
+        onStartShouldSetPanResponder: (evt, gestureState) => {
             this.setState({ captureResponder: true })
             if (!this.props.disablePanResponder){
                 return gestureState.dx != 0 && gestureState.dy != 0;
@@ -31,8 +31,8 @@ export default class Collidable extends Component {
                 return gestureState.dx != 0 && gestureState.dy != 0;
             }
           },
-  		  onPanResponderMove: (event, gestureState) => {
-			  this.stopCollidable()
+        onPanResponderMove: (event, gestureState) => {
+        this.stopCollidable()
 
               var [
                   TOP_Y,
@@ -59,31 +59,65 @@ export default class Collidable extends Component {
                   })
               }
 
-		  },
-  		  onPanResponderRelease: (event, gestureState) => {
-			  requestAnimationFrame(() => {
-				  UIManager.measure(findNodeHandle(this.animatedObject), (x, y) =>{
-					  this.setState({
+      },
+          onPanResponderTerminate: (event, gestureState) => {
+        requestAnimationFrame(() => {
+          UIManager.measure(findNodeHandle(this.animatedObject), (x, y) =>{
+            this.setState({
                             x: x,
                             y: y,
                             vx: vel_x,
                             vy: vel_y
                         })
-					  this.interval = setInterval(this.update, 1000 / 60);
-				  })
-			  })
-		  },
-  	  })
+            this.interval = setInterval(this.update, 1000 / 60);
+          })
+        })
+      },
+        onPanResponderRelease: (event, gestureState) => {
+        requestAnimationFrame(() => {
+          UIManager.measure(findNodeHandle(this.animatedObject), (x, y) =>{
+            this.setState({
+                            x: x,
+                            y: y,
+                            vx: vel_x,
+                            vy: vel_y
+                        })
+            this.interval = setInterval(this.update, 1000 / 60);
+          })
+        })
+      },
+      })
 
-  	  this.state = {
-		  panResponder,
+      this.state = {
+      panResponder,
           captureResponder: true,
-		  position,
-		  x: 0,
-		  y: 0,
-		  vx: this.props.initialVelocityX,
-		  vy: this.props.initialVelocityY,
-	  }
+      position,
+      x: 0,
+      y: 0,
+      vx: this.props.initialVelocityX,
+      vy: this.props.initialVelocityY,
+    }
+    }
+
+    componentWillMount() {
+        this._animatedValue = new Animated.ValueXY()
+        this._value = {x: 0, y: 0}
+
+        this._animatedValue.addListener((value) => this._value = value);
+        this._panResponder = PanResponder.create({
+          onMoveShouldSetResponderCapture: () => true, //Tell iOS that we are allowing the movement
+          onMoveShouldSetPanResponderCapture: () => true, // Same here, tell iOS that we allow dragging
+          onPanResponderGrant: (e, gestureState) => {
+            this._animatedValue.setOffset({x: this._value.x, y: this._value.y});
+            this._animatedValue.setValue({x: 0, y: 0});
+          },
+          onPanResponderMove: Animated.event([
+            null, {dx: this._animatedValue.x, dy: this._animatedValue.y}
+          ]), // Creates a function to handle the movement and set offsets
+          onPanResponderRelease: () => {
+            this._animatedValue.flattenOffset(); // Flatten the offset so it resets the default positioning
+        }
+        });
     }
 
     componentDidMount() {
@@ -115,12 +149,12 @@ export default class Collidable extends Component {
 
     stopCollidable = () => {
       if (this.interval) {
-    	clearInterval(this.interval);
+      clearInterval(this.interval);
       }
     }
 
     update = () => {
-	  const { x, y, vx, vy, position } = this.state;
+    const { x, y, vx, vy, position } = this.state;
       const {
           enableImpactForce,
           verticalImpactForce,
@@ -145,25 +179,25 @@ export default class Collidable extends Component {
           LEFT_X,
         ] = containerDimension
 
-	  let { x_, y_, vx_, vy_ } = 0
+    let { x_, y_, vx_, vy_ } = 0
 
-	  if (y >= BOTTOM_Y - collidableOffSetHeight || y <= TOP_Y){
-		  vy_ =  enableImpactForce === true ? -(vy - ( vy * verticalImpactForce )) : -vy
-	  } else {
-		  vy_ =  verticalGravityEnabled === true ? (vy + verticalGravity) : vy;
-	  }
+    if (y >= BOTTOM_Y - collidableOffSetHeight || y <= TOP_Y){
+      vy_ =  enableImpactForce === true ? -(vy - ( vy * verticalImpactForce )) : -vy
+    } else {
+      vy_ =  verticalGravityEnabled === true ? (vy + verticalGravity) : vy;
+    }
 
-	  if ( x >= RIGHT_X - collidableOffSetWidth ||  x  <= LEFT_X){
-		  vx_ = enableImpactForce === true ? -(vx - ( vx * horizontalImpactForce )) : -vx
-	  } else {
+    if ( x >= RIGHT_X - collidableOffSetWidth ||  x  <= LEFT_X){
+      vx_ = enableImpactForce === true ? -(vx - ( vx * horizontalImpactForce )) : -vx
+    } else {
           vx_ =  horizontalGravityEnabled === true ? (vx + horizontalGravity) : vx;
-	  }
+    }
 
-	  if ((vy_ >= -velocityMinY && vy_ <= velocityMinY) &&
+    if ((vy_ >= -velocityMinY && vy_ <= velocityMinY) &&
           (vx_ >= -velocityMinX && vx_ <= velocityMinX) &&
           ( x >= RIGHT_X - collidableOffSetWidth )) {
-		this.stopCollidable()
-	  }
+    this.stopCollidable()
+    }
 
       if ( vy_ >= velocityMaxY || vx_ >= velocityMaxX ) {
           this.props.onReachingMaxVelocity()
@@ -183,13 +217,13 @@ export default class Collidable extends Component {
 
     render() {
       return (
-		<Animated.View
-			ref={animatedObject => this.animatedObject = animatedObject}
-			{...this.state.panResponder.panHandlers}
-			style={[{...this.state.position.getLayout()}, this.props.collidableStyle]}
-		>
+    <Animated.View
+      ref={animatedObject => this.animatedObject = animatedObject}
+      {...this.state.panResponder.panHandlers}
+      style={[{...this.state.position.getLayout()}, this.props.collidableStyle]}
+    >
             {this.props.children}
-		</Animated.View>
+    </Animated.View>
     );
   }
 }
